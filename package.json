@@ -1,0 +1,27 @@
+{
+  "name": "ToDo",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --progress --mode=production",
+    "watch": "webpack --progress --watch --mode=production",
+    "watchdev": "webpack --progress --watch --mode=development" 
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlanContrerasM/ToDo.git"
+  },
+  "keywords": [],
+  "author": "Alan_Contreras <alanrcontrerasm@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AlanContrerasM/ToDo/issues"
+  },
+  "homepage": "https://github.com/AlanContrerasM/ToDo#readme",
+  "devDependencies": {
+    "webpack": "^5.26.0",
+    "webpack-cli": "^4.5.0"
+  }
+}
