@@ -19,12 +19,65 @@ const DisplayController  = (()=>{
         _showPopUp(something);
     }
 
-    const showProjects = (projectsArr) =>{
-        console.log(projectsArr);
+    const createEventListeners = () =>{
+        const btnShowProjectForm = document.querySelector("#btnShowProjectForm");
+        const btnCreateProject = document.querySelector("#btnCreateProject");
+
+        const projectFormDiv = document.querySelector("#projectFormDiv");
+        const formProject = document.querySelector("#formProject");
+
+        const taskFormDiv = document.querySelector("#taskFormDiv");
+
+        // event listener for create project
+        btnShowProjectForm.addEventListener("click", (e)=>{
+            console.log("pressed btnShowProjectForm");
+            projectFormDiv.classList.remove("hidden");
+        })
+
+        btnCreateProject.addEventListener("click", (e)=>{
+            console.log("pressed create project")
+            e.preventDefault();
+            let isCorrect = formProject.checkValidity();
+            formProject.reportValidity();
+            if(isCorrect){
+
+            }
+        })
+        
 
     }
 
-    return {saySomething, showProjects}
+    const showProjects = (projectsArr) =>{
+        // console.log(projectsArr);
+        content.innerHTML = "";
+        projectsArr.forEach((project)=>{
+            const projectDiv = document.createElement("div");
+
+            projectDiv.classList.add("project");
+            projectDiv.innerHTML = `<h2>${project.getTitle()}</h2>`
+
+            project.getList().forEach((task)=>{
+                const taskDiv = document.createElement("div");
+
+                taskDiv.classList.add("task");
+
+                taskDiv.innerHTML = `<h3>${task.getTitle()}</h3>`;
+                taskDiv.innerHTML += `<p>${task.getDesc()}</p>`
+                taskDiv.innerHTML += `<p>${task.getDueDate()}</p>`
+                taskDiv.innerHTML += `<p>Priority: ${task.getPriority()}</p>`
+                taskDiv.innerHTML += `<p>${task.getNotes()}</p>`
+                projectDiv.appendChild(taskDiv);
+            })
+            
+
+            content.appendChild(projectDiv);
+        })
+        
+
+
+    }
+
+    return {saySomething, showProjects, createEventListeners}
 })();
 
 
@@ -37,6 +90,7 @@ const LogicModule = (()=>{
         //local Storage stuff
         if(checkLocalStorage()){
             _populateProjectsArr();
+
         }else{
             console.log("no MyProjects in localStorage, or empty");
             _createDefaultProj();
@@ -44,6 +98,9 @@ const LogicModule = (()=>{
 
 
         DisplayController.showProjects(projects);
+        DisplayController.createEventListeners();
+
+
 
     }
 
@@ -67,10 +124,11 @@ const LogicModule = (()=>{
             //getting all the tasks from project and creating them
             const tasks = [];
             taskArr = project.split("#-#");
+            // console.log(taskArr);
             taskArr.pop();
             taskArr.forEach((task)=>{
                 let details = task.split("-#-");
-                details.pop();
+                // console.log(details);
                 tasks.push(ToDo(details[0], details[1], details[2], Number(details[3]),details[4]));
             })
 
@@ -85,6 +143,8 @@ const LogicModule = (()=>{
 
     const _addProject = (project) =>{
         projects.push(project);
+
+        DisplayController.showProjects(projects);
 
         _populateLocalStorage();
 
