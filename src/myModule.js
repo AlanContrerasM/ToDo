@@ -8,7 +8,6 @@ const DisplayController  = (()=>{
 
     const content = document.querySelector("#content");
 
-    let aVariable = "hello"
 
     //privates is better to declare starting with _
     //set popup to visible
@@ -20,7 +19,7 @@ const DisplayController  = (()=>{
         _showPopUp(something);
     }
 
-    const createEventListeners = () =>{
+    const createInitialEventListeners = () =>{
         const btnShowProjectForm = document.querySelector("#btnShowProjectForm");
         const btnCreateProject = document.querySelector("#btnCreateProject");
         const btnsDeleteProject = document.querySelectorAll(".deleteProject");
@@ -110,8 +109,78 @@ const DisplayController  = (()=>{
                 taskFormDiv.classList.add("hidden");
             }
         })
+
+        btnsDeleteTask.forEach((btn) =>{
+            btn.addEventListener("click", (e)=>{
+                // console.log("clicked");
+                LogicModule.removeTask(e.target.parentNode.parentNode.firstElementChild.textContent, e.target.previousSibling.textContent)
+
+            })
+        })
         
 
+    }
+
+    const createEventListeners = () =>{
+        const btnsDeleteProject = document.querySelectorAll(".deleteProject");
+        
+
+
+        const btnShowTaskForm = document.querySelectorAll(".showTaskForm");
+        const taskFormDiv = document.querySelector("#taskFormDiv");
+        const formTask = document.querySelector("#formTask");
+        const btnCreateTask = document.querySelector("#btnCreateTask");
+        const btnsDeleteTask = document.querySelectorAll(".deleteTask");
+
+        btnsDeleteProject.forEach((btn) =>{
+            btn.addEventListener("click", (e)=>{
+                LogicModule.removeProject(e.target.previousSibling.textContent)
+
+            })
+        })
+
+        btnShowTaskForm.forEach((btn)=>{
+            btn.addEventListener("click", (e)=>{
+                taskFormDiv.classList.remove("hidden");
+                taskFormDiv.firstElementChild.firstElementChild.innerHTML = `New Task for: ${e.target.id}`;
+            })
+            formTask.reset();
+        })
+
+        btnCreateTask.addEventListener("click", (e) =>{
+            
+            const formTitle = document.querySelector("#formTTitle")
+            const formDesc = document.querySelector("#formTDesc")
+            const formDate = document.querySelector("#formTDate")
+            const formPrior = document.querySelector("#formTPriority")
+            const formNotes = document.querySelector("#formTNotes")
+
+            //getting project title from title of taskformDiv
+            let projectTitle = btnCreateTask.parentNode.firstElementChild.innerHTML.split(": ")[1];
+            // console.log("pressed create task for: " + projectTitle);
+            e.preventDefault();
+            let isCorrect = formTask.checkValidity();
+            // console.log(isCorrect);
+            formTask.reportValidity();
+            if(isCorrect){
+                
+                LogicModule.addTask(projectTitle,
+                                                    ToDo(formTitle.value,
+                                                            formDesc.value,
+                                                            formDate.value,
+                                                            formPrior.value,
+                                                            formNotes.value))
+                taskFormDiv.classList.add("hidden");
+            }
+        })
+
+        btnsDeleteTask.forEach((btn) =>{
+            btn.addEventListener("click", (e)=>{
+                // console.log("clicked");
+                LogicModule.removeTask(e.target.parentNode.parentNode.firstElementChild.textContent, e.target.previousSibling.textContent)
+
+            })
+        })
     }
 
     const showProjects = (projectsArr) =>{
@@ -131,6 +200,7 @@ const DisplayController  = (()=>{
                 taskDiv.classList.add("task"); 
 
                 taskDiv.innerHTML = `<h3>Task: ${task.getTitle()}</h3>`;
+                taskDiv.innerHTML += `<p class="deleteTask">Delete</p>`;
                 taskDiv.innerHTML += `<p>Desc: ${task.getDesc()}</p>`
                 taskDiv.innerHTML += `<p>Due Date: ${task.getDueDate()}</p>`
 
@@ -153,10 +223,10 @@ const DisplayController  = (()=>{
         })
         
 
-
+        DisplayController.createEventListeners();
     }
 
-    return {saySomething, showProjects, createEventListeners}
+    return {saySomething, showProjects, createInitialEventListeners, createEventListeners}
 })();
 
 
@@ -177,7 +247,7 @@ const LogicModule = (()=>{
 
 
         DisplayController.showProjects(projects);
-        DisplayController.createEventListeners();
+        DisplayController.createInitialEventListeners();
 
 
 
@@ -285,7 +355,7 @@ const LogicModule = (()=>{
 
         _populateLocalStorage();
 
-        DisplayController.createEventListeners();
+        
 
         
     }
@@ -306,7 +376,28 @@ const LogicModule = (()=>{
         _populateLocalStorage();
     }
 
-    return{startUpProcess, addProject, removeProject, addTask}
+    const removeTask = (project, task) =>{
+
+
+        console.log("trying to remove " + project + " and " + task);
+        let indexOfProject;
+        projects.forEach((ToDoProject, index)=>{
+            if(ToDoProject.getTitle() == project){
+                indexOfProject = index;
+            }
+
+        })
+
+        projects[indexOfProject].removeToDo(task);
+
+        DisplayController.showProjects(projects);
+
+        _populateLocalStorage();
+
+        
+    }
+
+    return{startUpProcess, addProject, removeProject, addTask, removeTask}
 })();
 
 

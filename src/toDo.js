@@ -37,8 +37,18 @@ const ToDoProject = (title, toDoArr) =>{
     const addToDo = (toDo) =>{
         _list.push(toDo);
     }
+    const removeToDo = (task) =>{
+        let indexOfTask;
+        _list.forEach((ToDo, index)=>{
+            if(ToDo.getTitle() == task){
+                indexOfTask = index;
+            }
+        })
 
-    return {getTitle, setTitle, getList, setList, addToDo}
+        _list.splice(indexOfTask,1);
+    }
+
+    return {getTitle, setTitle, getList, setList, addToDo, removeToDo}
 
 
 }
