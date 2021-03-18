@@ -32,14 +32,28 @@ const DisplayController  = (()=>{
         btnShowProjectForm.addEventListener("click", (e)=>{
             console.log("pressed btnShowProjectForm");
             projectFormDiv.classList.remove("hidden");
+            formProject.reset();
         })
 
         btnCreateProject.addEventListener("click", (e)=>{
+
+            const formPTitle = document.querySelector("#formPTitle")
+            const formPTTitle = document.querySelector("#formPTTitle")
+            const formPTDesc = document.querySelector("#formPTDesc")
+            const formPTDate = document.querySelector("#formPTDate")
+            const formPTPrior = document.querySelector("#formPTPriority")
+            const formPTNotes = document.querySelector("#formPTNotes")
+
+
+
             console.log("pressed create project")
             e.preventDefault();
             let isCorrect = formProject.checkValidity();
             formProject.reportValidity();
             if(isCorrect){
+                let date = formPTDate.value.split("-")
+                console.log(date);
+                
 
             }
         })
@@ -59,7 +73,7 @@ const DisplayController  = (()=>{
             project.getList().forEach((task)=>{
                 const taskDiv = document.createElement("div");
 
-                taskDiv.classList.add("task");
+                taskDiv.classList.add("task"); 
 
                 taskDiv.innerHTML = `<h3>${task.getTitle()}</h3>`;
                 taskDiv.innerHTML += `<p>${task.getDesc()}</p>`

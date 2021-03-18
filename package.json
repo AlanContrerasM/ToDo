@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --progress --mode=production",
     "watch": "webpack --progress --watch --mode=production",
-    "watchdev": "webpack --progress --watch --mode=development" 
+    "watchdev": "webpack --progress --watch --mode=development"
   },
   "repository": {
     "type": "git",
@@ -23,5 +23,8 @@
   "devDependencies": {
     "webpack": "^5.26.0",
     "webpack-cli": "^4.5.0"
+  },
+  "dependencies": {
+    "date-fns": "^2.19.0"
   }
 }

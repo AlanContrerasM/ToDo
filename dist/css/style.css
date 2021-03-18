@@ -160,6 +160,13 @@ form *{
     padding: .2em 0;
 }
 
+.task{
+    background-color: #333;
+    box-shadow: 2px 2px 2px 2px #eee;
+    border-radius: 10px;
+    margin: 20px;
+}
+
 /* for tablets */
 @media only screen and(max-width: 1024px) {
 }
