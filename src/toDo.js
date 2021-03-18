@@ -34,8 +34,11 @@ const ToDoProject = (title, toDoArr) =>{
     const setTitle = (newTitle) =>{ title = newTitle};
     const getList = () => _list;
     const setList = (list) => {_list = list};
+    const addToDo = (toDo) =>{
+        _list.push(toDo);
+    }
 
-    return {getTitle, setTitle, getList, setList}
+    return {getTitle, setTitle, getList, setList, addToDo}
 
 
 }

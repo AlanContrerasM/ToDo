@@ -29,15 +29,15 @@
         <label>Due Date</label>
         <input type="date" id="formPTDate" required><br>
         <label>Priority</label>
-        <input type="number" id="formPTPriority"  value="1" required><br>
+        <input type="number" id="formPTPriority"  min="1" max="5" value="1" required><br>
         <label>Notes</label>
         <input type="textbox" id="formPTNotes" required>
         <br>
         <button id="btnCreateProject" type="submit">Create Project</button>
       </form>
     </div>
-    <div id="taskForm" class="hidden formDiv">
-      <form >
+    <div id="taskFormDiv" class="hidden formDiv">
+      <form id="formTask">
         <h2>New Task</h2><br>
         <label>Title</label>
         <input type="text" id="formTTitle" required><br>
@@ -46,22 +46,23 @@
         <label>Due Date</label>
         <input type="date" id="formTDate" required><br>
         <label>Priority</label>
-        <input type="number" id="formTPriority" value="1" required><br>
+        <input type="number" id="formTPriority" min="1" max="5" value="1" required><br>
         <label>Notes</label>
-        <input type="textbox" id="formTNotes" required>
+        <input type="textbox" id="formTNotes" required><br>
+        <button id="btnCreateTask" type="submit">Create Task</button>
       </form>
     </div>
     <header>
       <h1>To Do's</h1>
     </header>
-    <nav>
+    <!-- <nav>
       <ul>
         <li id="homeNav" class="activeNav">Home</li>
         <li id="menuNav">Menu</li>
         <li id="aboutNav">About</li>
         <li id="contactNav">Contact</li>
     </ul>
-    </nav>
+    </nav> -->
     <main>
       <button id="btnShowProjectForm">Create New Project</button>
       <div id="content"></div>

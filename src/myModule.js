@@ -1,6 +1,7 @@
 //myModule.js
 
 import {ToDo, ToDoCheck, ToDoProject} from './toDo.js';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 //A Module for editing DOM
 const DisplayController  = (()=>{
@@ -22,11 +23,17 @@ const DisplayController  = (()=>{
     const createEventListeners = () =>{
         const btnShowProjectForm = document.querySelector("#btnShowProjectForm");
         const btnCreateProject = document.querySelector("#btnCreateProject");
+        const btnsDeleteProject = document.querySelectorAll(".deleteProject");
+        
 
         const projectFormDiv = document.querySelector("#projectFormDiv");
         const formProject = document.querySelector("#formProject");
 
+        const btnShowTaskForm = document.querySelectorAll(".showTaskForm");
         const taskFormDiv = document.querySelector("#taskFormDiv");
+        const formTask = document.querySelector("#formTask");
+        const btnCreateTask = document.querySelector("#btnCreateTask");
+        const btnsDeleteTask = document.querySelectorAll(".deleteTask");
 
         // event listener for create project
         btnShowProjectForm.addEventListener("click", (e)=>{
@@ -51,10 +58,56 @@ const DisplayController  = (()=>{
             let isCorrect = formProject.checkValidity();
             formProject.reportValidity();
             if(isCorrect){
-                let date = formPTDate.value.split("-")
-                console.log(date);
                 
+                LogicModule.addProject(ToDoProject(formPTitle.value,
+                                                    ToDo(formPTTitle.value,
+                                                            formPTDesc.value,
+                                                            formPTDate.value,
+                                                            formPTPrior.value,
+                                                            formPTNotes.value)));
+                projectFormDiv.classList.add("hidden");
+            }
+        })
 
+        btnsDeleteProject.forEach((btn) =>{
+            btn.addEventListener("click", (e)=>{
+                LogicModule.removeProject(e.target.previousSibling.textContent)
+
+            })
+        })
+
+        btnShowTaskForm.forEach((btn)=>{
+            btn.addEventListener("click", (e)=>{
+                taskFormDiv.classList.remove("hidden");
+                taskFormDiv.firstElementChild.firstElementChild.innerHTML = `New Task for: ${e.target.id}`;
+            })
+            formTask.reset();
+        })
+
+        btnCreateTask.addEventListener("click", (e) =>{
+            
+            const formTitle = document.querySelector("#formTTitle")
+            const formDesc = document.querySelector("#formTDesc")
+            const formDate = document.querySelector("#formTDate")
+            const formPrior = document.querySelector("#formTPriority")
+            const formNotes = document.querySelector("#formTNotes")
+
+            //getting project title from title of taskformDiv
+            let projectTitle = btnCreateTask.parentNode.firstElementChild.innerHTML.split(": ")[1];
+            // console.log("pressed create task for: " + projectTitle);
+            e.preventDefault();
+            let isCorrect = formTask.checkValidity();
+            // console.log(isCorrect);
+            formTask.reportValidity();
+            if(isCorrect){
+                
+                LogicModule.addTask(projectTitle,
+                                                    ToDo(formTitle.value,
+                                                            formDesc.value,
+                                                            formDate.value,
+                                                            formPrior.value,
+                                                            formNotes.value))
+                taskFormDiv.classList.add("hidden");
             }
         })
         
@@ -68,21 +121,33 @@ const DisplayController  = (()=>{
             const projectDiv = document.createElement("div");
 
             projectDiv.classList.add("project");
-            projectDiv.innerHTML = `<h2>${project.getTitle()}</h2>`
+
+            projectDiv.innerHTML = `<h2>${project.getTitle()}</h2>`;
+            projectDiv.innerHTML += `<p class="deleteProject">X</p>`;
 
             project.getList().forEach((task)=>{
                 const taskDiv = document.createElement("div");
 
                 taskDiv.classList.add("task"); 
 
-                taskDiv.innerHTML = `<h3>${task.getTitle()}</h3>`;
-                taskDiv.innerHTML += `<p>${task.getDesc()}</p>`
-                taskDiv.innerHTML += `<p>${task.getDueDate()}</p>`
+                taskDiv.innerHTML = `<h3>Task: ${task.getTitle()}</h3>`;
+                taskDiv.innerHTML += `<p>Desc: ${task.getDesc()}</p>`
+                taskDiv.innerHTML += `<p>Due Date: ${task.getDueDate()}</p>`
+
+                let dateArr = task.getDueDate().split("-");
+                // console.log(dateArr)
+                //imported from date-fns
+                taskDiv.innerHTML += `<p>*${formatDistanceToNow(new Date(
+                                                                Number(dateArr[0]), 
+                                                                Number(dateArr[1])-1,
+                                                                Number(dateArr[2])),
+                                                                { addSuffix: true })}</p>`
                 taskDiv.innerHTML += `<p>Priority: ${task.getPriority()}</p>`
-                taskDiv.innerHTML += `<p>${task.getNotes()}</p>`
+                taskDiv.innerHTML += `<p>* ${task.getNotes()}</p>`
                 projectDiv.appendChild(taskDiv);
             })
             
+            projectDiv.innerHTML += `<button id="${project.getTitle()}" class="showTaskForm">Add Task</button>`;
 
             content.appendChild(projectDiv);
         })
@@ -155,7 +220,7 @@ const LogicModule = (()=>{
 
     }
 
-    const _addProject = (project) =>{
+    const addProject = (project) =>{
         projects.push(project);
 
         DisplayController.showProjects(projects);
@@ -187,9 +252,9 @@ const LogicModule = (()=>{
     }
 
     const _createDefaultProj = () =>{
-        _addProject(ToDoProject("My Project", ToDo("My Task"
+        addProject(ToDoProject("My Project", ToDo("My Task"
                                                     , "Must be done immediately, priority 5!"
-                                                    , "A date"
+                                                    , "2021-08-19"
                                                     , 5
                                                     , "The world is ending!")));
     }
@@ -204,7 +269,44 @@ const LogicModule = (()=>{
         }
     }
 
-    return{startUpProcess}
+    const removeProject = (project) =>{
+        // console.log("trying to remove " + project);
+        let indextoDelete;
+        projects.forEach((ToDoProject, index)=>{
+            if(ToDoProject.getTitle() == project){
+                indextoDelete = index;
+            }
+
+        })
+
+        projects.splice(indextoDelete,1);
+
+        DisplayController.showProjects(projects);
+
+        _populateLocalStorage();
+
+        DisplayController.createEventListeners();
+
+        
+    }
+
+    const addTask = (project, task)=>{
+        let projectIndex;
+        projects.forEach((ToDoProject, index)=>{
+            if(ToDoProject.getTitle() == project){
+                projectIndex = index;
+            }
+
+        })
+
+        projects[projectIndex].addToDo(task);
+
+        DisplayController.showProjects(projects);
+
+        _populateLocalStorage();
+    }
+
+    return{startUpProcess, addProject, removeProject, addTask}
 })();
 
 
