@@ -1,6 +1,6 @@
 //myModule.js
 
-import {ToDo, ToDoCheck, ToDoProject} from './toDo.js';
+import {ToDo, ToDoProject} from './toDo.js';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 //A Module for editing DOM
@@ -35,7 +35,7 @@ const DisplayController  = (()=>{
         const btnsDeleteTask = document.querySelectorAll(".deleteTask");
 
         // event listener for create project
-        btnShowProjectForm.addEventListener("click", (e)=>{
+        btnShowProjectForm.addEventListener("click", ()=>{
             console.log("pressed btnShowProjectForm");
             projectFormDiv.classList.remove("hidden");
             formProject.reset();
